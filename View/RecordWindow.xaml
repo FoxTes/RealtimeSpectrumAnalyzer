@@ -1,0 +1,68 @@
+﻿<UserControl
+    x:Class="Real_time_Spectrum_Analyzer.View.RecordWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Real_time_Spectrum_Analyzer.ViewModel"
+    xmlns:local_view="clr-namespace:Real_time_Spectrum_Analyzer.View"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="400"
+    d:DesignWidth="600"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type local:RecordFileWindowViewModel}">
+            <local_view:RecordFileWindow />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:RecordAnalysisWindowViewModel}">
+            <local_view:RecordAnalysisWindow />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#FF202020" />
+        <Border Grid.Row="1" Background="#FF121314" />
+
+        <StackPanel
+            Grid.Row="0"
+            Height="55"
+            MaxWidth="1800"
+            Orientation="Horizontal">
+
+            <RadioButton
+                Content="Файл"
+                FontFamily="Open Sand"
+                FontSize="22"
+                GroupName="File"
+                IsChecked="{Binding IsFilePage}"
+                Style="{DynamicResource RadioButtonSecondStyle}" />
+            <RadioButton
+                Content="Анализ"
+                FontFamily="Open Sand"
+                FontSize="22"
+                GroupName="File"
+                IsChecked="{Binding IsAnalysisPage}"
+                Style="{DynamicResource RadioButtonSecondStyle}" />
+        </StackPanel>
+
+        <ContentControl Grid.Row="2" Content="{Binding CurrentPageViewModel}" />
+
+        <Border
+            Grid.Row="2"
+            Height="10"
+            VerticalAlignment="Top"
+            Opacity="0.25">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="1,0">
+                    <GradientStop Offset="1" Color="#FF222222" />
+                    <GradientStop Offset="0.25" Color="Black" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+    </Grid>
+</UserControl>

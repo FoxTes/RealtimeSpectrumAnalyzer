@@ -1,0 +1,85 @@
+﻿<Window
+    x:Class="Real_time_Spectrum_Analyzer.HomeWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Real_time_Spectrum_Analyzer.ViewModel"
+    xmlns:local_view="clr-namespace:Real_time_Spectrum_Analyzer.View"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="1200"
+    Height="675"
+    MinWidth="1200"
+    MinHeight="675"
+    Style="{StaticResource WindowStyle}"
+    WindowState="Normal"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:MainWindowViewModel}">
+            <local_view:MainWindow />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:RecordWindowViewModel}">
+            <local_view:RecordWindow />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:SettingWindowViewModel}">
+            <local_view:SettingWindow />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#FF282828" />
+        <Border Grid.Row="1" Background="#FF121314" />
+
+        <StackPanel
+            Grid.Row="0"
+            Height="55"
+            MaxWidth="1800"
+            Orientation="Horizontal">
+            <!--<Image Source="/Resourse/Images/MainIcon.png"/>-->
+            <RadioButton
+                Content="Главная"
+                FontFamily="Open Sand"
+                FontSize="24"
+                GroupName="Languages"
+                IsChecked="{Binding IsMainPage}"
+                Style="{DynamicResource RadioButtonStyle}" />
+            <RadioButton
+                Content="Записи"
+                FontFamily="Open Sand"
+                FontSize="24"
+                GroupName="Languages"
+                IsChecked="{Binding IsRecordPage}"
+                Style="{DynamicResource RadioButtonStyle}" />
+            <RadioButton
+                Content="Дополнительно"
+                FontFamily="Open Sand"
+                FontSize="24"
+                GroupName="Languages"
+                IsChecked="{Binding IsAdditionalPage}"
+                Style="{DynamicResource RadioButtonStyle}" />
+        </StackPanel>
+
+        <ContentControl Grid.Row="2" Content="{Binding CurrentPageViewModel}" />
+
+        <Border
+            Grid.Row="2"
+            Height="10"
+            VerticalAlignment="Top"
+            Opacity="0.25">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="1,0">
+                    <GradientStop Offset="1" Color="#FF222222" />
+                    <GradientStop Offset="0.25" Color="Black" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+    </Grid>
+</Window>

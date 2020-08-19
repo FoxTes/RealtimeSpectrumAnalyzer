@@ -1,0 +1,551 @@
+﻿<UserControl
+    x:Class="Real_time_Spectrum_Analyzer.View.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:cc="clr-namespace:CSharpControls.Wpf;assembly=CSharpControls.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:intr="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:local="clr-namespace:Real_time_Spectrum_Analyzer.View"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="http://schemas.abtsoftware.co.uk/scichart"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    d:DesignHeight="600"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <intr:Interaction.Triggers>
+        <intr:EventTrigger EventName="Loaded">
+            <intr:InvokeCommandAction Command="{Binding WindowLoaded}" />
+        </intr:EventTrigger>
+    </intr:Interaction.Triggers>
+
+    <UserControl.Resources>
+
+        <SolidColorBrush x:Key="LegendTextBrush" Color="Gainsboro" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <!--  This is the default LegendItemTemplate from our styles, but we have modified it to allow a notification on checkbox check  -->
+        <DataTemplate x:Key="LegendItemTemplate" DataType="s:SeriesInfo">
+            <Grid Width="450" Height="30">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="5,0,5,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource LegendTextBrush}"
+                    Text="{Binding SeriesName}" />
+
+                <CheckBox
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{StaticResource LegendTextBrush}"
+                    IsChecked="{Binding RenderableSeries.IsVisible, Mode=TwoWay}"
+                    Visibility="{Binding LegendData.ShowVisibilityCheckboxes, RelativeSource={RelativeSource AncestorType=s:SciChartLegend}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <StackPanel
+                    Grid.Column="2"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <Border Width="1" Background="{StaticResource LegendTextBrush}" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Foreground="{StaticResource LegendTextBrush}"
+                        Text="Stroke Thickness: " />
+                    <Slider
+                        MinWidth="100"
+                        Margin="5,0,10,0"
+                        DataContext="{Binding RenderableSeries}"
+                        Maximum="7"
+                        Minimum="1"
+                        Value="{Binding Path=StrokeThickness, Mode=TwoWay}" />
+                    <Border Width="1" Background="{StaticResource LegendTextBrush}" />
+                </StackPanel>
+
+                <!--  From Extended Wpf Toolkit NuGet package  -->
+                <StackPanel
+                    Grid.Column="3"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="{StaticResource LegendTextBrush}"
+                        Text="Stroke: " />
+                    <xctk:ColorPicker
+                        Width="50"
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        ColorMode="ColorCanvas"
+                        DataContext="{Binding RenderableSeries}"
+                        SelectedColor="{Binding Stroke, Mode=TwoWay}" />
+                </StackPanel>
+
+            </Grid>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid MaxWidth="1800">
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <cc:ToggleSwitch
+            x:Name="autoScaleMainChart"
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="0,0,0,15"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            CheckedText="On"
+            Content="AutoScale"
+            FontSize="14"
+            Foreground="Gainsboro"
+            HeaderContentPlacement="Left"
+            HeaderHorizontalAlignment="Stretch"
+            HeaderPadding="0 0 10 0"
+            IsChecked="True"
+            SwitchContentPlacement="Left"
+            TextBlock.TextAlignment="Right"
+            UncheckedBorderBrush="Gray"
+            UncheckedForeground="Gray"
+            UncheckedText="Off" />
+        <cc:ToggleSwitch
+            x:Name="autoScaleSecondChart"
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="0,0,0,15"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            CheckedText="On"
+            Content="AutoScale"
+            FontSize="14"
+            Foreground="Gainsboro"
+            HeaderContentPlacement="Left"
+            HeaderHorizontalAlignment="Stretch"
+            HeaderPadding="0 0 10 0"
+            IsChecked="True"
+            SwitchContentPlacement="Left"
+            TextBlock.TextAlignment="Right"
+            UncheckedBorderBrush="Gray"
+            UncheckedForeground="Gray"
+            UncheckedText="Off" />
+
+        <TextBlock
+            Grid.Row="0"
+            Width="60"
+            Height="25"
+            Margin="15,25,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="16"
+            Foreground="Gainsboro"
+            Text="Статус:" />
+        <TextBlock
+            Grid.Row="0"
+            Height="25"
+            Margin="70,25,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="16"
+            Foreground="Gainsboro"
+            Text="{Binding StatusLabel}" />
+        <Controls:ProgressRing
+            Grid.Row="0"
+            Width="30"
+            Height="30"
+            Margin="170,15,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Foreground="Gainsboro"
+            IsActive="{Binding StatusRecord}" />
+
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="auto"
+            Height="auto"
+            Margin="15"
+            Background="Transparent">
+
+            <Border
+                Width="auto"
+                Height="40"
+                Background="#FF2D2D30" />
+
+            <TextBlock
+                Width="300"
+                Height="26"
+                Margin="25,-40,0,0"
+                HorizontalAlignment="Left"
+                Background="#FF2D2D30"
+                FontSize="16"
+                Foreground="Gainsboro"
+                Text="Сигналы осей с датчика акселерометра" />
+
+        </StackPanel>
+        <s:SciChartSurface
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="15,55,15,15"
+            Background="#FF1C1C1E"
+            s:RenderSurfaceExtensions.RenderSurfaceType="HighSpeed">
+
+            <s:SciChartSurface.RenderSurface>
+                <s:HighSpeedRenderSurface/>
+            </s:SciChartSurface.RenderSurface>
+
+            <!--  Create three RenderableSeries, which map 1:1 to the DataSeries created in code-behind  -->
+            <s:SciChartSurface.RenderableSeries>
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesX}"
+                    Stroke="#FFE13219"
+                    StrokeThickness="3" />
+                <s:FastLineRenderableSeries
+                    DataSeries = "{Binding RenderableSeriesY}"
+                    Stroke="#FFFFA500"
+                    IsEnabled="False"
+                    StrokeThickness="3" />
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesZ}"
+                    Stroke="#FF4083B7"
+                    IsEnabled="False"
+                    StrokeThickness="3" />
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesX_Averge}"
+                    Stroke="Green"
+                    StrokeThickness="3" />
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesY_Averge}"
+                    Stroke="Beige"
+                    IsEnabled="False"
+                    StrokeThickness="3" />
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesZ_Averge}"
+                    Stroke="GreenYellow"
+                    IsEnabled="False"
+                    StrokeThickness="3" />
+            </s:SciChartSurface.RenderableSeries>
+
+            <!--  Create an X Axis  -->
+            <s:SciChartSurface.XAxis>
+                <s:NumericAxis
+                    MinHeight="50"
+                    AutoRange="Always"
+                    AxisTitle="Sample (Count)"
+                    DrawMinorGridLines="False"
+                    DrawMinorTicks="False"
+                    TextFormatting="0" />
+            </s:SciChartSurface.XAxis>
+
+            <!--  Create a Y Axis  -->
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis
+                    AutoRange="Always"
+                    AxisTitle="Value"
+                    DrawMinorGridLines="False"
+                    DrawMinorTicks="False"
+                    TextFormatting="0.0"
+                    VisibleRange="-10, 10">
+                    <s:NumericAxis.GrowBy>
+                        <s:DoubleRange Max="0.25" Min="0.25" />
+                    </s:NumericAxis.GrowBy>
+                </s:NumericAxis>
+            </s:SciChartSurface.YAxis>
+
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+                    <s:LegendModifier
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        LegendPlacement="Inside"
+                        Orientation="Horizontal"
+                        ShowLegend="True" />
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
+
+        </s:SciChartSurface>
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Width="auto"
+            Height="auto"
+            Margin="15"
+            Background="Transparent">
+
+            <Border
+                Width="auto"
+                Height="40"
+                Background="#FF2D2D30" />
+
+            <TextBlock
+                Width="400"
+                Height="26"
+                Margin="25,-40,0,0"
+                HorizontalAlignment="Left"
+                Background="#FF2D2D30"
+                FontSize="16"
+                Foreground="Gainsboro"
+                Text="Спектральный анализ сигнала оси" />
+        </StackPanel>
+        <s:SciChartSurface
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="15,55,15,15"
+            Background="#FF1C1C1E"
+            s:RenderSurfaceExtensions.RenderSurfaceType="HighSpeed">
+
+            <s:SciChartSurface.RenderSurface>
+                <s:HighQualityRenderSurface />
+            </s:SciChartSurface.RenderSurface>
+
+            <!--  Create three RenderableSeries, which map 1:1 to the DataSeries created in code-behind  -->
+            <s:SciChartSurface.RenderableSeries>
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesX_FFT}"
+                    Stroke="#FFE13219"
+                    StrokeThickness="3" />
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesY_FFT}"
+                    Stroke="#FFFFA500"
+                    StrokeThickness="3" />
+                <s:FastLineRenderableSeries
+                    DataSeries ="{Binding RenderableSeriesZ_FFT}"
+                    Stroke="#FF4083B7"
+                    StrokeThickness="3" />
+            </s:SciChartSurface.RenderableSeries>
+
+            <!--  Create an X Axis  -->
+            <s:SciChartSurface.XAxis>
+                <s:NumericAxis
+                    MinHeight="50"
+                    AutoRange="Always"
+                    AxisTitle="Frequency (Hz)"
+                    DrawMinorGridLines="False"
+                    DrawMinorTicks="False"
+                    TextFormatting="0" />
+            </s:SciChartSurface.XAxis>
+
+            <!--  Create a Y Axis  -->
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis
+                    AutoRange="Always"
+                    AxisTitle="Value"
+                    DrawMinorGridLines="False"
+                    DrawMinorTicks="False"
+                    TextFormatting="0.0"
+                    VisibleRange="-60, 0">
+                    <s:NumericAxis.GrowBy>
+                        <s:DoubleRange Max="0.25" Min="0.25" />
+                    </s:NumericAxis.GrowBy>
+                </s:NumericAxis>
+            </s:SciChartSurface.YAxis>
+
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+                    <s:LegendModifier
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        LegendItemTemplate="{StaticResource LegendItemTemplate}"
+                        LegendPlacement="Inside"
+                        ShowLegend="True" />
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
+
+        </s:SciChartSurface>
+
+        <TextBlock
+            Grid.Row="0"
+            Margin="15,55,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            FontSize="16"
+            Foreground="Gainsboro"
+            Text="Частота опроса - 400 Гц" />
+        <Separator
+            Grid.RowSpan="2"
+            Grid.Column="0"
+            Margin="15,90,15,10"
+            VerticalAlignment="Top" />
+        <Separator
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            Margin="15,0"
+            VerticalAlignment="Center" />
+
+        <!--<GroupBox
+            Grid.Row="1"
+            Margin="20,105,20,224"
+            Header="Управление"
+            Style="{DynamicResource GroupBoxStyleSetting}">
+            <StackPanel>
+                <Button
+                    Width="100"
+                    Height="25"
+                    Margin="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{DynamicResource ButtonStyleSetting}">
+                    <StackPanel
+                        Width="80"
+                        HorizontalAlignment="Stretch"
+                        Orientation="Horizontal">
+                        <Border
+                            x:Name="Bd"
+                            Margin="10,0,0,0"
+                            HorizontalAlignment="Left"
+                            Background="Transparent">
+                            <Path
+                                x:Name="Pt"
+                                Data="M18.54,9,8.88,3.46a3.42,3.42,0,0,0-5.13,3V17.58A3.42,3.42,0,0,0,7.17,21a3.43,3.43,0,0,0,1.71-.46L18.54,15a3.42,3.42,0,0,0,0-5.92Zm-1,4.19L7.88,18.81a1.44,1.44,0,0,1-1.42,0,1.42,1.42,0,0,1-.71-1.23V6.42a1.42,1.42,0,0,1,.71-1.23A1.51,1.51,0,0,1,7.17,5a1.54,1.54,0,0,1,.71.19l9.66,5.58a1.42,1.42,0,0,1,0,2.46Z"
+                                Fill="#FF969696"
+                                Stretch="Uniform"
+                                Stroke="#FF969696"
+                                StrokeThickness="1" />
+                        </Border>
+                        <TextBlock Margin="10,0,0,0" Text="Старт" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    Width="100"
+                    Height="25"
+                    Margin="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{DynamicResource ButtonStyleSetting}">
+                    <StackPanel
+                        Width="80"
+                        HorizontalAlignment="Stretch"
+                        Orientation="Horizontal">
+                        <Border
+                            x:Name="Bd_1"
+                            Margin="10,2,0,2"
+                            HorizontalAlignment="Left"
+                            Background="Transparent">
+                            <Path
+                                x:Name="Pt_1"
+                                Data="M187.733,0H51.2c-9.426,0-17.067,7.641-17.067,17.067V460.8c0,9.426,7.641,17.067,17.067,17.067h136.533    c9.426,0,17.067-7.641,17.067-17.067V17.067C204.8,7.641,197.159,0,187.733,0z                                 M426.667,0H290.133c-9.426,0-17.067,7.641-17.067,17.067V460.8c0,9.426,7.641,17.067,17.067,17.067h136.533    c9.426,0,17.067-7.641,17.067-17.067V17.067C443.733,7.641,436.092,0,426.667,0z"
+                                Fill="#FF969696"
+                                Stretch="Uniform"
+                                Stroke="#FF969696"
+                                StrokeThickness="1" />
+                        </Border>
+                        <TextBlock Margin="10,0,0,0" Text="Пауза" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    Width="100"
+                    Height="25"
+                    Margin="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{DynamicResource ButtonStyleSetting}">
+                    <StackPanel
+                        Width="80"
+                        HorizontalAlignment="Stretch"
+                        Orientation="Horizontal">
+                        <Border
+                            x:Name="Bd_2"
+                            Width="16"
+                            Height="15"
+                            Margin="10,0,0,0"
+                            HorizontalAlignment="Left"
+                            Background="Transparent">
+
+                            <Path
+                                x:Name="Pt_2"
+                                Data="M139.899 148.337h232.212v215.317h-232.213v-215.316z"
+                                Fill="#FF969696"
+                                Stretch="Uniform"
+                                Stroke="#FF969696"
+                                StrokeThickness="1" />
+                        </Border>
+                        <TextBlock Margin="10,0,0,0" Text="Стоп" />
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+        </GroupBox>-->
+
+        <StackPanel
+            Grid.Row="0"
+            Margin="15,95,10,0"
+            VerticalAlignment="Top">
+            <Label
+                Content="Тип округления:"
+                FontSize="16"
+                Foreground="Gainsboro" />
+            <RadioButton
+                x:Name="rb_1"
+                Margin="10,5,10,10"
+                Content=" Среднее ариф."
+                FontSize="16"
+                Foreground="Gainsboro"
+                GroupName="Averge"
+                IsChecked="{Binding IsArithmeticMeanMode}" />
+            <RadioButton
+                x:Name="rb_2"
+                Margin="10,0,10,10"
+                Content=" Среднее квадр."
+                FontSize="16"
+                Foreground="Gainsboro"
+                GroupName="Averge"
+                IsChecked="{Binding IsRootMeanSquare}" />
+            <RadioButton
+                x:Name="rb_3"
+                Margin="10,0,10,10"
+                Content=" Среднее скольз."
+                FontSize="16"
+                Foreground="Gainsboro"
+                GroupName="Averge"
+                IsChecked="{Binding IsMovingAverageMode}" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Margin="15,50,10,0"
+            VerticalAlignment="Top">
+            <Label
+                Content="Тип преобразования:"
+                FontSize="16"
+                Foreground="Gainsboro" />
+            <RadioButton
+                x:Name="rb_4"
+                Margin="10,5,10,10"
+                Content=" СПМ"
+                FontSize="16"
+                Foreground="Gainsboro"
+                GroupName="Convert"
+                IsChecked="{Binding IsAmplitudeMode}" />
+            <RadioButton
+                x:Name="rb_5"
+                Margin="10,0,10,10"
+                Content=" Магнитуда"
+                FontSize="16"
+                Foreground="Gainsboro"
+                GroupName="Convert"
+                IsChecked="{Binding IsSpectralDensitMode}" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>

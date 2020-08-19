@@ -1,0 +1,140 @@
+﻿<UserControl
+    x:Class="Real_time_Spectrum_Analyzer.View.RecordFileWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="http://schemas.abtsoftware.co.uk/scichart/exampleExternals"
+    xmlns:intr="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:local="clr-namespace:Real_time_Spectrum_Analyzer.View"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <intr:Interaction.Triggers>
+        <intr:EventTrigger EventName="Loaded">
+            <intr:InvokeCommandAction Command="{Binding WindowLoaded}" />
+        </intr:EventTrigger>
+    </intr:Interaction.Triggers>
+
+    <Grid MaxWidth="1800">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="30,0,0,0"
+                FontFamily="Open Sand"
+                FontSize="22"
+                Foreground="Gainsboro"
+                Text="Протоколы из дазы данных" />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="0"
+            Grid.Column="1"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="30,0,0,0"
+                FontFamily="Open Sand"
+                FontSize="22"
+                Foreground="Gainsboro"
+                Text="Работа с данными" />
+        </StackPanel>
+
+        <ListBox
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="30,00,30,30"
+            Background="#FF282828"
+            BorderThickness="0"
+            ItemsSource="{Binding DataListBox}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock
+                        FontSize="16"
+                        Foreground="{Binding ForegroundColor}"
+                        Text="{Binding Value}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <Button
+                Grid.Column="1"
+                Width="200"
+                Height="40"
+                Margin="30,0,0,0"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                BorderThickness="2"
+                Command="{Binding StartRecord}"
+                Content="Начать запись"
+                FontFamily="Open Sand"
+                FontSize="16"
+                Foreground="Gainsboro" />
+            <Separator
+                Width="200"
+                Margin="30,20,0,0"
+                HorizontalAlignment="Left" />
+            <Button
+                Grid.Column="1"
+                Width="200"
+                Height="40"
+                Margin="30,20,0,0"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                BorderThickness="2"
+                Content="Прочитать"
+                FontFamily="Open Sand"
+                FontSize="16"
+                Foreground="Gainsboro" />
+            <Button
+                Grid.Column="1"
+                Width="200"
+                Height="40"
+                Margin="30,20,0,0"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                BorderThickness="2"
+                Content="Удалить"
+                FontSize="16"
+                Foreground="Gainsboro" />
+            <Button
+                Grid.Column="1"
+                Width="200"
+                Height="40"
+                Margin="30,20,0,0"
+                HorizontalAlignment="Left"
+                Background="Transparent"
+                BorderThickness="2"
+                Command="{Binding ClearAllDataBase}"
+                Content="Удалить все данные"
+                FontFamily="Open Sand"
+                FontSize="16"
+                Foreground="Gainsboro" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>
